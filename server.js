@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require('body-parser');
+const passport = require('passport');
 
 const users = require("./routes/api/users");
 const profile = require("./routes/api/profile");
@@ -23,14 +24,16 @@ mongoose
   })
   .catch(err => console.log(err));
 
-//use Routes
+//passport middleware
+app.use(passport.initialize());
+
+//passport config
+require('./config/passport')(passport);
+
+  //use Routes
 app.use("/api/users", users);
 app.use("/api/profile", profile);
 app.use("/api/posts", posts);
-
-app.get("/", (requestAnimationFrame, res) => {
-  res.send("Yo!!!!!");
-});
 
 app.listen(port, () => {
   console.log(`Listening on port ${port}`);
