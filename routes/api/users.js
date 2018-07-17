@@ -4,25 +4,28 @@ const gravatar = require("gravatar");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const passport = require("passport");
+
+//Load Input validation
+const validateRegisterInput = require('../../validation/register');
+
 //Load User model
 const User = require("../../models/User");
 
 //Load key
 const keys = require("../../config/keys");
 
-//@route:   GET api/users/test
-//@desc:    Tests users route
-//@access:  Public
-router.get("/test", (req, res) => {
-  res.json({
-    msg: "Users works!"
-  });
-});
 
 //@route:   GET api/users/register
 //@desc:    Register user
 //@access:  Public
 router.post("/register", (req, res) => {
+const {errors, isValid} = validateRegisterInput(req.body);
+
+//Check validation
+if (!isValid){
+  return res.status(400).json(errors);
+}
+
   User.findOne({ email: req.body.email }).then(user => {
     if (user) {
       return res.status(400).json({ email: "Email exists" });
